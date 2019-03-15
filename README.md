@@ -26,7 +26,9 @@ Convert a .json file to a swift decodable class
   
   4. Enter:
   ```
-  swiftc json2SwiftClass.swift 
+  cat AnyCodable.swift json2SwiftClass.swift | swiftc - 
   ```
-  5. Do steps: 4,5 of Usage
+  5. Rename "main" exe to "json2SwiftClass"
+  
+  6. Do steps: 4,5 of Usage
   
