@@ -1,21 +1,34 @@
-/*#!/usr/bin/swift -frontend -interpret -enable-source-import -I./Sources
-
-import AnyCodable
-import AnyDecodable
-import AnyEncodable*/
 import Foundation
 
-let arguments = Array(CommandLine.arguments.dropFirst())
-print(arguments)
-let (jsonPath, swiftPath) = (arguments[0], arguments[1])
-
-let parentClass = URL(fileURLWithPath: jsonPath).lastPathComponent.dropLast(".json".count)
-let rawJson = (try? String(contentsOf: URL(fileURLWithPath: jsonPath))) ?? ""
-
-let jsonDict: [String: AnyCodable] = [
-    String(parentClass): (try? JSONDecoder().decode(AnyCodable.self, from: rawJson.data(using: .utf8)!)) ?? [:]
-]
-
+let json = """
+{
+"ConsultDataOut": {
+    "boolean": true,
+    "integer": 1,
+    "double": 3.14159265358979323846,
+    "string": "string",
+    "customArray": [
+        {
+        "aCustom": "alpha",
+        "bCustom": "bravo",
+        "cCustom": "charlie"
+        },
+        {
+        "aCustom": "alpha",
+        "bCustom": "bravo",
+        "cCustom": "charlie"
+        }
+    ],
+    "array": [1, 2, 3],
+    "arrayString": ["uno", "dos", "tres"],
+    "nested": {
+        "a": "alpha",
+        "b": "bravo",
+        "c": "charlie"
+    }
+}
+}
+"""
 var classString = ""
 
 func getType(key:String, value: AnyCodable) -> String {
@@ -114,6 +127,10 @@ func createClass(decodedClasses: [String: AnyCodable]?) {
     }
 }
 
-createClass(decodedClasses: jsonDict)
-print(classString)
-try? classString.write(to: URL(fileURLWithPath: swiftPath), atomically: true, encoding: .utf8)
+if let data = json.data(using: .utf8),
+    let decodedClasses = try? JSONDecoder().decode([String: AnyCodable].self, from: data) {
+    createClass(decodedClasses: decodedClasses)
+    print(classString)
+}
+
+
